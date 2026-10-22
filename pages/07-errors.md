@@ -6,125 +6,169 @@ layout: section
 
 # Error Handling
 
-<!--
-- Passing errors on with ?, custom error types, and when to panic
--->
-
 ---
 class: dense
 ---
 
 # Kinds of Errors
 
-<div class="grid grid-cols-2 gap-8 mt-4">
-  <div class="card">
+Rust has no exceptions. It distinguishes two kinds of errors.
+
+<div class="grid grid-cols-2 gap-8 mt-4 compact">
+  <div class="card flex flex-col">
     <h3 class="c-green">Expected errors: <code>Result&lt;T, E&gt;</code></h3>
     <p>Missing file, network unreachable, invalid input. The caller decides how to handle them.</p>
-    <p class="muted mt-1">Roughly: checked exception</p>
-  </div>
-  <div class="card">
-    <h3 class="c-red">Programming errors: <code>panic!</code></h3>
-    <p>Index out of bounds, violated invariant. The thread unwinds and stops. In <code>main</code>, this ends the program.</p>
-    <p class="muted mt-1">Roughly: unchecked exception, not meant to be caught</p>
-  </div>
-</div>
 
-<div v-click="1" class="mt-4">
-
-A panic at runtime:
-
-<div class="relative">
-<div class="code-pointer" style="top: 30px">▶</div>
+<div class="mt-3">
 
 ```rust
-let sizes = vec!["S", "M", "L"];
-let size = sizes[5]; // src/main.rs, line 3
+let port: Result<u16, _> = "80a".parse();
+// Err(ParseIntError { kind: InvalidDigit })
 ```
 
 </div>
 
-<div class="small-code mt-2">
+<p class="muted" style="margin-top: auto; padding-top: 0.5rem">Roughly: checked exception</p>
+  </div>
+  <div class="card flex flex-col" v-click="1">
+    <h3 class="c-red">Programming errors: <code>panic!</code></h3>
+    <p>Index out of bounds, violated invariant. The thread unwinds and stops. In <code>main</code>, this ends the program.</p>
 
-```text
-thread 'main' (34883817) panicked at src/main.rs:3:21:
-index out of bounds: the len is 3 but the index is 5
+<div class="mt-3">
+
+```rust
+let size = sizes[5]; // sizes has 3 elements
+// panic: index out of bounds
 ```
 
 </div>
+
+<p class="muted" style="margin-top: auto; padding-top: 0.5rem">Roughly: unchecked exception, not meant to be caught</p>
+  </div>
 </div>
 
-<div v-click="2" class="mt-4">
-We know <code>Result</code> from chapter 5. This chapter covers passing errors on and custom error types.
-</div>
+<div v-click="2" class="mt-6">
 
-<!--
-- Compared to Java and C#: Result is roughly a checked exception (Java), the possible error is visible in the signature. A panic is roughly an unchecked exception (RuntimeException), but it is not meant to be caught. C# has no checked exceptions, there the error is not visible in the signature at all.
-- Click 1: a real panic. Indexing out of bounds is a programming error, so Rust panics instead of returning a Result. The number in parentheses is the thread id. With RUST_BACKTRACE=1 the program also prints the call stack.
-- sizes.get(5) returns an Option instead, for cases where a missing index is expected
-- An unused Result causes a compiler warning (#[must_use])
--->
+For indexing, the standard library offers both: `sizes[5]` panics, `sizes.get(5)` returns `None`. Libraries generally report errors as `Result` and avoid panics.
+
+</div>
 
 ---
 class: dense
 ---
 
-# Using `Result`
+# Handling a `Result`
 
-```rust
-use std::fs;
+The same input, four ways to handle the error.
 
-fn main() {
-    match fs::read_to_string("port.txt") {
-        Ok(content) => println!("Port: {content}"),
-        Err(error) => eprintln!("Could not read file: {error}"),
-    }
-}
-```
-
-The value is only accessible after the error case has been handled.
-
-<div v-click="1">
-
-`unwrap` and `expect` take the value directly and cause a panic on error. They are suitable for tests and prototypes:
+<div class="grid grid-cols-[3fr_2fr] gap-8">
+<div>
 
 <div class="relative">
-<div class="code-pointer" v-click="2" :style="{ top: ($clicks >= 3 ? 30 : 12) + 'px' }">▶</div>
 
-```rust
-let port: u16 = "80a".parse().unwrap();
-let port: u16 = "80a".parse().expect("port must be a number");
+```rust {all|3-6|7|8|9|8}
+let input = "80a"; // e.g. read from a config file
+
+let port: u16 = match input.parse() {
+    Ok(port) => port,
+    Err(_) => 8080,
+};
+let port: u16 = input.parse().unwrap_or(8080);
+let port: u16 = input.parse().expect("port must be a number");
+let port: u16 = input.parse()?;
 ```
 
+<div class="code-pointer" v-click="5" style="top: 121px">▶</div>
 </div>
 
-</div>
-
-<div class="grid mt-2">
-<div v-click="[2, 3]" class="small-code" style="grid-area: 1 / 1">
+<div v-click="5" class="mt-3">
 
 ```text
-thread 'main' (35107165) panicked at src/main.rs:2:35:
-called `Result::unwrap()` on an `Err` value: ParseIntError { kind: InvalidDigit }
-```
-
-</div>
-<div v-click="3" class="small-code" style="grid-area: 1 / 1">
-
-```text
-thread 'main' (35107172) panicked at src/main.rs:3:35:
+thread 'main' (38335095) panicked at src/main.rs:9:35:
 port must be a number: ParseIntError { kind: InvalidDigit }
 ```
 
 </div>
+
+</div>
+<div class="text-base">
+
+<div v-click="1">
+
+- `match`: any handling, here a default port
+
+</div>
+<div v-click="2">
+
+- `unwrap_or`: the same as a one-liner
+
+</div>
+<div v-click="3">
+
+- `expect`: panics with the message on `Err`. `unwrap()` does the same without a message.
+
+</div>
+<div v-click="4">
+
+- `?`: returns the error to the caller (slide The `?` Operator)
+
 </div>
 
-<!--
-- Click 1: unwrap and expect on input that is not a number. Both panic.
-- Click 2: the output of the unwrap line, a generic message.
-- Click 3: the output of the expect line (as if the unwrap line were removed, otherwise the program stops at line 2). expect shows our own message, which makes the cause easier to find. The two lines are lines 2 and 3 of main.rs.
-- Use unwrap/expect in production code only when an error is impossible
-- Clippy can forbid unwrap via a lint
--->
+</div>
+</div>
+
+---
+class: dense
+---
+
+# The `Error` Trait
+
+<div class="grid grid-cols-[2fr_3fr] gap-8">
+<div>
+
+```rust
+// standard library, simplified
+pub trait Error: Debug + Display {
+    fn source(&self) -> Option<&dyn Error> {
+        None // the underlying cause
+    }
+}
+```
+
+<div v-click="1" class="text-base mt-3">
+
+`Error: Debug + Display`: every error type must also implement `Debug` and `Display`. `source()` has a default implementation.
+
+</div>
+
+</div>
+<div>
+
+<div v-click="2">
+
+```rust
+#[derive(Debug)]
+struct ReservedPort(u16);
+
+impl fmt::Display for ReservedPort {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "port {} is reserved", self.0)
+    }
+}
+
+impl Error for ReservedPort {}
+```
+
+</div>
+
+<div v-click="3" class="text-base mt-3">
+
+`io::Error`, `ParseIntError` and the other error types of the standard library implement `Error` as well. `Box<dyn Error>` can hold any of them (next slide).
+
+</div>
+
+</div>
+</div>
 
 ---
 class: dense
@@ -163,7 +207,7 @@ fn read_port(path: &str) -> Result<u16, Box<dyn Error>> {
 
 <div class="muted text-base mt-2">
 
-`Box<dyn Error>`: any error type. `dyn` as in chapter 6, `Box` stores the value on the heap (chapter 8).
+`Box<dyn Error>`: any type that implements `Error` (previous slide). `Box` stores the value on the heap.
 
 </div>
 
@@ -177,16 +221,6 @@ fn read_port(path: &str) -> Result<u16, Box<dyn Error>> {
     <p>Code as compact as with exceptions, and every error source is marked by the <code>?</code> in the code.</p>
   </div>
 </div>
-
-<!--
-- Start: read a port number from a file, with match. Two possible errors: the file cannot be read, the content is not a number. Each match returns early on Err.
-- error.into() converts the concrete error (io::Error, ParseIntError) into Box<dyn Error>. into() and From are the standard conversion traits (Standard Traits slide, chapter 6).
-- Click 1: the same function with ?, the two ? lines highlighted. Each ? replaces one of the match blocks.
-- fn main() -> Result<(), Box<dyn Error>> lets ? propagate errors out of main, the program then prints the error and exits with a failure code.
-- Box<dyn Error>: any error type, the caller no longer knows the concrete error. More precise errors with custom error types (next slide).
-- ? also works with Option
-- parse() converts text into the type given on the left (here u16)
--->
 
 ---
 class: dense
@@ -247,7 +281,7 @@ fn read_port(path: &str) -> Result<u16, ConfigError> {
 </div>
 <div class="text-base">
 
-<div class="grid">
+<div class="grid error-swap">
 <div v-click-hide="3" style="grid-area: 1 / 1">
 
 The function body is the same as on the previous slide. Only the error type changed.
@@ -260,9 +294,9 @@ The third variant has no underlying error. Ports below 1024 are reserved.
 </div>
 </div>
 
-`#[error(...)]` generates the `Display` implementation, `#[from]` generates the `From` implementation that `?` uses.
+`#[error(...)]` generates the `Display` and `Error` implementations, `#[from]` generates the `From` implementation that `?` uses.
 
-<div v-click="6" class="mt-4 small-code">
+<div v-click="6" class="mt-4">
 
 The caller can react to individual errors:
 
@@ -285,15 +319,9 @@ Common practice: `thiserror` for libraries, `anyhow` for applications.
 </div>
 </div>
 
-<!--
-- Click 1 and 2: the error enum with one variant per error source, then read_port. Same body as on the previous slide.
-- Click 3 to 5: a third error that does not come from a library: ports below 1024 are reserved
-- Click 6: the payoff compared to Box<dyn Error>. The caller can match on the variants, e.g. fall back to a default port when the file is missing.
-- The messages do not repeat the cause. The original error stays available as the source and is printed by anyhow as "Caused by: ...".
-- thiserror and anyhow are both by David Tolnay
-- anyhow: collect errors and print them with context, without custom error types
-- Complete code: cargo run --example 07_thiserror
--->
+<style>
+.error-swap p { margin-bottom: 0; }
+</style>
 
 ---
 class: dense
@@ -389,16 +417,3 @@ fn start_server(path: &str) -> Result<(), Report> {
 
 </div>
 </div>
-
-<!--
-- Optional
-- Start: the code from the previous slide, written more compactly
-- Click 1: the variants no longer store the cause. The cause stays in the report as its own node.
-- Click 2: return type Report<ConfigError>. Click 3: .context(...) turns the io or parse error into a report and puts ConfigError on top. Click 4: report! creates a report for an error without a cause.
-- Click 6: an application function with the untyped Report. .context(...) adds a node with a message, .attach(...) adds information for the log.
-- Click 7: the printed report, with source location and attachment for each node. Output of cargo run --example 07_rootcause, path shortened.
-- The caller matches with report.current_context(), which returns &ConfigError.
-- Typed where the caller wants to react (the default port for ConfigError::Io, as on the previous slide, now via report.current_context()), untyped where errors are only passed on and logged. ? converts a typed report into an untyped one.
-- thiserror still generates Display and Error for the enum
-- rootcause is still at 0.x (0.13), so updates may contain breaking changes. Alternatives: anyhow, eyre, error-stack.
--->

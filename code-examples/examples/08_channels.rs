@@ -1,21 +1,21 @@
-use tokio::sync::mpsc;
-
-#[tokio::main]
-async fn main() {
-    let (tx, mut rx) = mpsc::channel(32); // tx: sender, rx: receiver
-
-    for customer in ["Kevin", "Stuart"] {
+use std::sync::mpsc;
+use std::thread;
+fn main() {
+    let orders = vec![
+        vec![450, 1200], // prices in cents
+        vec![299],
+        vec![1299, 450, 99],
+    ];
+    let (tx, rx) = mpsc::channel(); // tx: sender, rx: receiver
+    for order in orders {
         let tx = tx.clone();
-        tokio::spawn(async move {
-            for id in 1..=2 {
-                let order = format!("order {id} from {customer}");
-                tx.send(order).await.unwrap();
-            }
+        thread::spawn(move || {
+            let order_total: u32 = order.iter().sum();
+            tx.send(order_total).unwrap();
         });
     }
     drop(tx); // the channel closes when all senders are gone
 
-    while let Some(order) = rx.recv().await {
-        println!("processing {order}");
-    }
+    let total: u32 = rx.iter().sum();
+    println!("Total: {total} cents"); // 3797
 }

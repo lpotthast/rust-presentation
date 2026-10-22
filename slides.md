@@ -25,12 +25,6 @@ layout: cover
 
 <img src="/ferris.svg" alt="Ferris" class="ferris absolute right-10 top-1/2 -translate-y-1/2 w-80" />
 
-<!--
-- Short introduction, my own connection to Rust
-- Goal: an overview of the language, not a programming course
-- Questions at any time
--->
-
 ---
 
 # Agenda
@@ -55,27 +49,6 @@ layout: cover
 
 </div>
 </div>
-
-<!--
-Schedule (minutes, with the slide where each part starts and the time at which you should be there):
-
-| Part | Minutes | Starts at slide | Clock |
-| --- | --- | --- | --- |
-| Intro | 1 | 1 | 0:00 |
-| Why Rust | 4 | 3 | 0:01 |
-| Tooling (Toolchain, Cargo) | 3 | 9 | 0:05 |
-| Syntax basics (incl. tests) | 6 | 15 | 0:08 |
-| Ownership | 12 | 22 | 0:14 |
-| Structs, newtypes, enums, Option & Result | 8 | 33 | 0:26 |
-| Traits | 5 | 43 | 0:34 |
-| Error handling | 4 | 48 | 0:39 |
-| Smart pointers, threads, futures & async | 8 | 54 | 0:43 |
-| Ecosystem (crates.io, serde) | 3 | 64 | 0:51 |
-| Conclusion (Order API, summary, AI assessment, use cases, resources) | 5 | 71 | 0:54 |
-| Buffer for questions | 1 | 77 | 0:59 |
-
-Slides that can be skipped when short on time are marked "Optional" in the notes, e.g. Cargo.toml, Semantic Versioning, Workspaces, Modules, Lifetimes, rootcause, Channels and most of the Ecosystem chapter. The plan assumes they are skipped or shown only briefly. If you are behind a checkpoint, skip the next optional slides.
--->
 
 ---
 src: ./pages/01-why-rust.md

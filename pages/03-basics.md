@@ -6,10 +6,6 @@ layout: section
 
 # Syntax Basics
 
-<!--
-- Syntax needed for the examples in the following chapters
--->
-
 ---
 
 # Hello World & Variables
@@ -46,12 +42,6 @@ Variables are immutable by default. <code>mut</code> makes them mutable.
 
 </div>
 </div>
-
-<!--
-- Static typing with type inference. Without an annotation, integers default to i32. Prices are u32 in cents in all following examples.
-- Shadowing: the name input is reused, the old variable is no longer reachable afterwards. Useful when a value is transformed step by step, e.g. trimmed and later parsed.
-- Macros: slide Macros & unsafe in chapter 9 (optional). The short version: macros generate code at compile time, which is why println! can check its format string.
--->
 
 ---
 class: dense
@@ -101,14 +91,6 @@ stock.insert("Banana", 12);
 </div>
 </div>
 
-<!--
-- Conversions: as for numbers, From/Into in general (chapter 6)
-- Prices in cents as u32, as in the following examples
-- Integer overflow: panic in debug builds, wrapping in release builds
-- use imports a name, like import in Java or Python
-- Difference between String and &str: slide Owned & Borrowed Types in chapter 4
--->
-
 ---
 
 # Functions & Expressions
@@ -137,15 +119,6 @@ fn main() {
 - `if` is an expression as well, so there is no ternary operator
 
 </div>
-
-<!--
-- Prices in cents as integers, floating point numbers are unsuitable for money. A dedicated type for money is even safer: The Newtype Pattern in chapter 5.
-- Format strings: {total} inserts the variable directly, checked at compile time
-- Often summarized as "everything is an expression". match (chapter 5) and loop (next slide) also produce values.
-- Exceptions are statements such as let
-- Click 1: the function body, its last expression is the return value. Click 2: if as an expression.
-- return exists for returning early, e.g. return 0; inside an if
--->
 
 ---
 class: dense
@@ -205,13 +178,6 @@ let delay_ms = loop {
 `for` always runs over an iterator, e.g. a range or a collection. There is no counting loop like `for (i = 0; i < n; i++)`.
 
 </div>
-
-<!--
-- Fewer off-by-one and indexing errors
-- Iterators in detail: chapter 6
-- 0..5 excludes the 5, 0..=5 includes it
-- enumerate() returns the index together with each element. iter() and iterators in detail: chapter 6.
--->
 
 ---
 class: dense
@@ -298,20 +264,6 @@ mod tests {
 </div>
 </div>
 
-<!--
-- Optional
-- Module structure follows the file structure: mod pricing; loads src/pricing.rs
-- Crate = compilation unit, modules organize the code within a crate
-- :: separates path segments, similar to . in Java packages. Functions of a type are called the same way, e.g. String::from.
-- Show the code first: main calls shipping_cost, which has no pub. The arrow marks that call.
-- Click 1: pricing.rs, order_total is pub, shipping_cost is not. Clicks 2 to 4: the compiler error, step by step. Click 2: the error line. Click 3: the call in main.rs (the arrow). Click 4: the note, and the definition without pub is highlighted on the right.
-- Click 5: the inline test module (mod tests { ... } in the same file) and the visibility rules
-- shipping_cost is private: not callable from main, but callable from the child module tests
-- Original rustc output. Full version: rustc --edition 2024 code-examples/compile-errors/03_private_function/main.rs
-- Inline module tests: common pattern for unit tests right next to the code. #[cfg(test)] and #[test] in detail on the next slide.
-- use super::* brings everything from the parent module into scope
--->
-
 ---
 class: dense
 ---
@@ -379,7 +331,7 @@ Unit tests in the same file, integration tests in `tests/`, run with `cargo test
 
 </div>
 
-<div v-click="2" class="small-code mt-4">
+<div v-click="2" class="mt-4">
 
 ```text
 $ cargo test
@@ -399,12 +351,3 @@ test src/lib.rs - is_valid_port (line 3) ... ok
 <style>
 .slidev-code:has(.slidev-code-dishonored) .slidev-code-highlighted span[style*="727072"] { color: #b5b3b5 !important; }
 </style>
-
-<!--
-- mod tests { ... } is an inline module in the same file as the code. #[cfg(test)]: the module is only compiled when testing.
-- assertr is the dev-dependency from the Cargo.toml slide. assert_that!(...) gives readable failure messages. Without a library: assert!(!is_valid_port(80)).
-- Tests in the same file can test private functions, because mod tests is a child module
-- use super::* imports everything from the enclosing module
-- Click 1: a doc comment with an example is added above the function, the example is highlighted. Click 2: output of cargo test, shortened (summary lines removed). Doc tests only run for library crates (src/lib.rs). The test calls the function through the crate name, like a user of the library would. my_crate stands for the name of the crate.
-- Integration tests: files in tests/ (Cargo slide), they only see the public API of the crate
--->

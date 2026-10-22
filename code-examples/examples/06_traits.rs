@@ -11,13 +11,13 @@ struct Email {
     address: String,
 }
 
-struct Console;
-
 impl Notifier for Email {
     fn recipient(&self) -> &str {
         &self.address
     }
 }
+
+struct Console;
 
 impl Notifier for Console {
     fn recipient(&self) -> &str {

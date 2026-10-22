@@ -6,11 +6,6 @@ layout: section
 
 # Ecosystem
 
-<!--
-- Libraries for typical tasks in real projects
-- Order: overview, then the optional slides, then serde and axum. axum leads directly into the combined example in chapter 10.
--->
-
 ---
 class: dense
 ---
@@ -37,14 +32,6 @@ More than 350,000 crates, each with API documentation on docs.rs. Crates in <str
   <div class="card"><h3 class="c-orange">Python</h3><p>pyo3, maturin</p></div>
   <div class="card"><h3 class="c-orange">C and C++</h3><p>bindgen, cxx</p></div>
 </div>
-
-<!--
-- Rows from top to bottom: web backend, every application, data and desktop, other platforms
-- The yellow crates were used in the examples of this talk. Some of them only on optional slides: reqwest (Cargo.toml), rootcause (chapter 7), clap (this chapter).
-- docs.rs generates the API documentation of every published crate in a uniform format
-- blessed.rs: curated list of recommended crates (also on the Resources slide)
-- Games: bevy
--->
 
 ---
 class: dense
@@ -74,13 +61,6 @@ Rust often replaces the performance-critical part of tools for other languages.
 <div class="muted text-base mt-2">
 Example: uv installs packages 10 to 100 times faster than pip (vendor figure).
 </div>
-
-<!--
-- Optional
-- ruff: also 10 to 100 times faster than Flake8 according to the vendor
-- Polars: alternative to pandas
-- VS Code runs ripgrep for "Find in Files", so most of the audience already uses Rust code daily
--->
 
 ---
 class: dense
@@ -114,7 +94,7 @@ fn main() {
 </div>
 <div>
 
-<div v-click="1" class="small-code">
+<div v-click="1">
 
 ```text
 $ reorder --help
@@ -133,7 +113,7 @@ Options:
 
 </div>
 
-<div v-click="2" class="small-code mt-3">
+<div v-click="2" class="mt-3">
 
 ```text
 $ reorder BANANA-01 --quantity 20
@@ -152,15 +132,6 @@ Help text, validation and error messages are generated from doc comments and typ
 
 </div>
 </div>
-
-<!--
-- Optional
-- A small internal tool: reorder a product from the supplier
-- The result is a single binary without runtime dependencies
-- /// are doc comments, clap uses them as help text
-- Click 2: quantity is a u8, so clap rejects 300 without any code for it
-- Output of code-examples/examples/09_clap.rs, built as a binary named reorder (with cargo run the usage line shows the example name instead). The help line for --quantity and the error line are wrapped for the slide.
--->
 
 ---
 class: dense
@@ -220,17 +191,6 @@ The compiler cannot check C code. The safe wrapper handles the one input for whi
 </div>
 </div>
 
-<!--
-- Optional
-- A macro receives the code itself, so stringify! can turn the condition into text
-- #[derive(...)] is a procedural macro: the serde slide uses it to generate the JSON code
-- abs(i32::MIN) has no valid result in an i32 and is undefined behavior in C. That is exactly the kind of precondition the compiler cannot check.
-- unsafe allows e.g. dereferencing raw pointers and calling C code (FFI). It does not disable the borrow checker, it only allows additional operations.
-- The standard library uses unsafe internally (e.g. Vec), the public API is safe
-- For memory bugs, only the unsafe blocks need to be checked
-- Makes it possible to introduce Rust step by step into existing C and C++ projects. C/C++ interop: bindgen, cbindgen, cxx
--->
-
 ---
 class: dense
 ---
@@ -283,16 +243,6 @@ The code is generated at compile time via `derive`, without reflection at runtim
 </div>
 </div>
 
-<!--
-- One of the most widely used crates
-- Click 1: the struct with derive, Click 2: parsing JSON into a User, Click 3: output as Debug and as JSON, Click 4: the real output
-- unwrap() panics if the JSON is invalid (chapter 7). In real code: return a Result and use ?.
-- Missing required fields or wrong types result in an Err
-- r#"..."# is a raw string, quotes inside it need no escaping
-- User matches the struct from chapter 5, extended with an id
-- Output of cargo run --example 09_serde
--->
-
 ---
 class: dense
 ---
@@ -342,12 +292,3 @@ $ curl localhost:3000/me
 
 </div>
 </div>
-
-<!--
-- axum is developed by the Tokio team and is the most downloaded web framework on crates.io
-- Combination of tokio, serde and axum. The User has the same fields as the User on the serde slide, only Serialize is needed here.
-- Click 1: an async handler. impl IntoResponse in the return type means "some type that implements IntoResponse", as with impl Future on the Futures slide (chapter 8). Json(...) is such a type and sends the value as JSON.
-- Click 2: the route /me points to the handler. Click 3: start the server on port 3000. Click 4: the response.
-- Other types that implement IntoResponse: String, StatusCode, tuples like (StatusCode::CREATED, Json(...)), and Result of such types. The combined example right after this chapter writes the concrete type Result<Json<...>, StatusCode>, because it returns two different types (Ok and Err).
-- Optional live demo: cd code-examples && cargo run --example 09_axum
--->

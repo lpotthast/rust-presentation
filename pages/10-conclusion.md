@@ -6,10 +6,6 @@ layout: section
 
 # Conclusion
 
-<!--
-- Starts with a combined example that uses most chapters, then summary, assessment with AI assistants, use cases and resources
--->
-
 ---
 class: dense
 ---
@@ -64,12 +60,12 @@ async fn main() {
 ```
 
 <div class="grid mt-2">
-  <div v-click="[1, 2]" class="muted text-base" style="grid-area: 1 / 1">Enum with data (chapter 5), JSON via <code>derive</code> (chapters 6 and 9)</div>
+  <div v-click="[1, 2]" class="muted text-base" style="grid-area: 1 / 1">Enum with data (chapter 5), JSON via <code>derive</code> (chapters 5 and 9)</div>
   <div v-click="[2, 3]" class="muted text-base" style="grid-area: 1 / 1"><code>Option</code> instead of <code>null</code> (chapter 5)</div>
   <div v-click="[3, 4]" class="muted text-base" style="grid-area: 1 / 1"><code>async</code> handler (chapter 8) with <code>Result</code> as return type (chapter 7)</div>
   <div v-click="[4, 5]" class="muted text-base" style="grid-area: 1 / 1"><code>ok_or</code> turns the <code>Option</code> into a <code>Result</code>, <code>?</code> returns 404 (chapter 7)</div>
   <div v-click="[5, 6]" class="muted text-base" style="grid-area: 1 / 1">Router with a path parameter (chapter 9)</div>
-  <div v-click="6" class="small-code" style="grid-area: 1 / 1">
+  <div v-click="6" style="grid-area: 1 / 1">
 
 ```text
 $ curl localhost:3000/orders/2
@@ -87,19 +83,6 @@ Invalid URL: Cannot parse `abc` to a `u32`
 </div>
 </div>
 
-<!--
-- Goal: show how the chapters fit together. No need to explain every line. The caption under the code names the chapter for each step.
-- Click 1: enum with data. serde generates the JSON, tag = "status" writes the variant into a field.
-- Click 2: Option instead of null, match on the id. find_order stands in for a database query.
-- Click 3: async handler with Result as the return type. axum reads the id from the path. Path(id): Path<u32> is a pattern in the parameter, it unpacks the value from the Path wrapper directly into id, like let (x, y) = point; for tuples.
-- Click 4: ok_or turns the Option into a Result, ? returns 404 directly on None
-- Click 5: router as on the axum slide, now with a path parameter
-- Each step highlights only the lines it talks about, the other block is dimmed
-- Click 6: output with curl. /orders/abc is rejected with 400 Bad Request before the handler runs, because id is a u32 (same idea as the u8 in the clap example). Response headers are left out on the slide.
-- Ownership is involved everywhere without having to write it out: status is moved into Json and belongs to axum afterwards.
-- The use lines and the listener are left out for space. Complete and runnable: cargo run --example 10_order_api
--->
-
 ---
 
 # Summary
@@ -113,18 +96,13 @@ The three goals from the start of the talk, with the chapters that showed them.
   </div>
   <div class="card" v-click>
     <h3 class="c-green">Reliability</h3>
-    <p>Use after move and dangling references do not compile (chapter 4), neither does <code>Rc</code> shared across threads (chapter 8). A missing <code>match</code> arm is reported, errors are part of the return type (chapters 5 and 7).</p>
+    <p>Use after move and dangling references do not compile (chapter 4), neither do data races between threads (chapter 8). A missing <code>match</code> arm is reported, errors are part of the return type (chapters 5 and 7).</p>
   </div>
   <div class="card" v-click>
     <h3 class="c-blue">Productivity</h3>
     <p>Cargo builds, tests and manages dependencies (chapter 2). Compiler errors show the cause and a fix (chapters 4 and 5). crates.io offers libraries for most tasks (chapter 9).</p>
   </div>
 </div>
-
-<!--
-- Same three headings as on the slide What Is Rust? at the beginning. Each point names a moment from the talk.
-- Afterwards: assessment with AI assistants, use cases and where to start
--->
 
 ---
 class: dense
@@ -161,19 +139,6 @@ class: dense
 Understanding ownership is still needed to review generated code. The Rust compiler does not find logic errors either.
 </div>
 
-<!--
-- Click 1: the pros that also help an AI assistant. Performance and the rest of the Summary are not repeated here, they do not depend on AI.
-- Tag colors mean the same in both columns, the legend appears with click 3
-- Clicks 2 and 3: the cons, and how much AI assistants reduce them. Compile times, learning curve and type signatures are the Costs rows from the Comparison in chapter 1. Compile times are longer than Go or Java.
-- My own assessment from practice, not a study
-- In languages with weak guarantees, faulty generated code compiles and only fails at runtime. In Rust the compiler rejects many of these errors, and the assistant fixes them in the next iteration.
-- Learning: assistants explain compiler errors and suggest fixes. The assistant writes and explains type signatures and lifetimes.
-- Async: error messages stay long, assistants help with reading them
-- Compile times matter even more for AI agents because they rebuild often. cargo check is much faster than a full build.
-- Learning ownership: in my experience a few weeks of regular use
-- Google (Lars Bergstrom, Rust Nation UK 2024): Rust teams are about as productive as Go teams and roughly twice as productive as C++ teams
--->
-
 ---
 class: dense
 ---
@@ -207,13 +172,6 @@ class: dense
   <p>An internal command-line tool or a small, well-scoped service.</p>
 </div>
 
-<!--
-- Relate to our own projects
-- The order API in this chapter is small to fit on a slide, it is not a recommendation to write simple CRUD services in Rust
-- Prototypes: with AI assistants the writing effort drops. Learning Rust is still needed but goes faster (see slide Pros & Cons).
-- Click 2: a first project with little risk. A CLI tool needs no deployment, a small service can be replaced if needed.
--->
-
 ---
 class: dense
 ---
@@ -235,14 +193,6 @@ Slides and all examples from this talk: <a href="https://github.com/lpotthast/ru
 
 </div>
 
-<!--
-- Recommendation for getting started: the Rust Book, with Rustlings alongside. The other resources are for later or for reference.
-- Comprehensive Rust: developed by the Android team at Google, a 4-day core course plus deep dives (Android, Chromium, bare metal, concurrency)
-- code-examples contains every example from the slides, plus the intentionally failing ones in compile-errors/
-- blessed.rs answers "which crate should I use for X?"
-- More exercises with mentoring: exercism.org/tracks/rust
--->
-
 ---
 layout: center
 class: text-center closing
@@ -253,11 +203,5 @@ class: text-center closing
 # Questions?
 
 <div class="muted text-base mt-8">
-<a href="https://github.com/lpotthast/rust-presentation">github.com/lpotthast/rust-presentation</a><br>
-<a href="https://doc.rust-lang.org/book/">doc.rust-lang.org/book</a> · <a href="https://rustlings.rust-lang.org">rustlings.rust-lang.org</a>
+<a href="https://github.com/lpotthast/rust-presentation">github.com/lpotthast/rust-presentation</a>
 </div>
-
-<!--
-- First link: the repository with the slides and code-examples. Below it: the two starting points from the Resources slide.
-- Show the Resources slide again if needed
--->

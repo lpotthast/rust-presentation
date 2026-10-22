@@ -6,10 +6,47 @@ layout: section
 
 # Ownership & Borrowing
 
-<!--
-- Longest chapter, about 12 minutes
-- Foundation for all following chapters
--->
+---
+class: dense
+---
+
+# Stack & Heap
+
+<div class="grid grid-cols-[2fr_3fr] gap-8 mt-2">
+<div class="flex flex-col gap-3 compact">
+  <div class="card">
+    <h3 class="c-blue">Stack</h3>
+    <p>One area per function call, for values whose size is known at compile time. Allocating only moves a pointer. The values are freed automatically when the function returns.</p>
+  </div>
+  <div class="card">
+    <h3 class="c-yellow">Heap</h3>
+    <p>For data whose size is only known at runtime or that grows. An allocator reserves the memory, and it must be freed again later. Who frees it, and when, is the topic of this chapter.</p>
+  </div>
+</div>
+<div>
+
+```rust {all|1-3|4|5|all}
+let price: u32 = 450;         // stack
+let item = ("Banana", 450);   // stack (tuple)
+let sizes = ["S", "M", "L"];  // stack (array)
+let cart = vec![450, 1200];   // ptr, len, cap on the stack, elements on the heap
+let boxed = Box::new(450);    // the number on the heap
+```
+
+<div v-click="3" class="text-base mt-3">
+
+`Box<T>` puts a single value on the heap. `Vec`, `String` and `Box` keep only a pointer and sizes on the stack.
+
+</div>
+
+</div>
+</div>
+
+<div v-click="4" class="mt-6">
+
+By default, every value is on the stack, including structs, tuples and arrays. Only types such as `Box`, `Vec`, `String` or `Arc` store data on the heap. In Java, every object is on the heap. In C#, instances of a `class` are, a `struct` is not.
+
+</div>
 
 ---
 class: dense
@@ -75,15 +112,6 @@ System.out.println(name);
   </div>
 </div>
 
-<!--
-- All three examples do the same: put "hello" on the heap, print it, release the memory. Only where and by whom the memory is freed differs.
-- C: forgetting free() is a memory leak, calling it twice is a double free, using name afterwards is a use-after-free
-- Java: the object stays in memory until the garbage collector runs. When exactly is not predictable.
-- Rust: the compiler inserts the drop at the closing brace. Only here the block matters, which is why only the Rust example has one. Details on the next slides.
-- Besides memory, ownership also manages other resources: files, locks, sockets
-- Corresponds to RAII in modern C++ (std::string, smart pointers), but enforced by the compiler. The "Manual" card means C with malloc/free and C++ with new/delete.
--->
-
 ---
 
 # Ownership Rules
@@ -124,14 +152,6 @@ fn main() {
 
 </div>
 </div>
-
-<!--
-- Variable and value: after a move, the variable still exists in the code but no longer owns a value. What gets dropped is always the value.
-- Click 3: example with two values in nested scopes. format! builds a String like println!, but returns it instead of printing it.
-- Click 4: at the end of each scope, the compiler inserts drop for the values whose owner ends there. label is dropped at the end of the inner block, order at the end of main. Dropping frees the memory. No garbage collector, no manual free().
-- String::from creates a String on the heap. "A-1001" alone would be a fixed literal in the program that nobody has to free.
-- The rule for references (either one writer or any number of readers) follows on the slide Borrowing Rules, after references are introduced
--->
 
 ---
 
@@ -248,17 +268,6 @@ fn take(s: String) {
 </div>
 </div>
 
-<!--
-- Moved variables are shown greyed out, dropped values red and struck through
-- "s2 is dropped here" in the code comments is short for "the value owned by s2 is dropped here"
-- Start: s1 owns a String. Pointer, length and capacity live on the stack, the text lives on the heap.
-- Click 1, move: let s2 = s1 only copies the three fields on the stack. If both were valid, the heap memory would be freed twice at the end. That is why s1 is invalid afterwards.
-- Click 2, clone: a deep copy only happens explicitly. Expensive copies are therefore visible in the code.
-- Click 3, function call: passing a value to a function is also a move. The parameter s in take becomes the owner, s3 is invalid afterwards. Nothing changes on the heap.
-- Click 4, end of take: s goes out of scope, the compiler inserts drop(s). Only here is the copy on the heap freed.
-- Click 5, Copy: simple types such as numbers, bool and char are copied instead of moved. Copy is a trait, comparable to an interface (chapter 6). a and b live only on the stack.
--->
-
 ---
 
 # Use After Move
@@ -296,18 +305,6 @@ help: consider cloning the value if the performance cost is acceptable
 ```
 
 </div>
-
-<!--
-- Show the code first and ask: does this compile? It is the move from the previous slide, followed by an access to s1. The arrow marks the line that causes the error.
-- Click 1: error code, summary and location. rustc --explain E0382 gives a detailed explanation.
-- println! only reads s1. Rust calls that a borrow, hence "borrow of moved value" (borrowing: next slide).
-- From click 2 on, the matching line in the code above is highlighted together with the error section
-- Click 2: where s1 is created, and why it is moved: String does not implement Copy
-- Click 3: the move to s2
-- Click 4: the access after the move
-- Click 5: suggested fix with clone()
-- Original rustc output. Full version: code-examples/compile-errors/04_move_error.rs
--->
 
 ---
 
@@ -364,17 +361,6 @@ fn main() {
 `&address` and `&mut address` are references to the value of `address`. The variable `address` stays the owner of the value.
 
 </div>
-
-<!--
-- Start: length takes a String by value. Passing address moves the value into the function, the println! afterwards fails (E0382, as on the previous slide). The arrow marks that line.
-- rustc even points at the cause: "note: consider changing this parameter type in function `length` to borrow instead if owning the value isn't necessary ... this parameter takes ownership of the value". That is exactly the next click.
-- Click 1: only the parameter type changes, String becomes &String, and the call passes &address. length borrows the value, address stays the owner. It compiles.
-- Click 2: append borrows mutably with &mut String and adds text. address must be declared mut. length is called afterwards and sees the new text (28 characters).
-- &T: shared reference for reading, &mut T: exclusive reference for modifying
-- At runtime these are plain pointers, no overhead
-- &str as the parameter would be more idiomatic (clippy: ptr_arg), see slide Owned & Borrowed Types. &String here so that only the & changes.
-- Full code: cargo run --example 04_borrowing, the failing first version: code-examples/compile-errors/04_move_into_function.rs
--->
 
 ---
 
@@ -453,16 +439,59 @@ This version compiles. The borrow held by `first` ends at its last use, after th
 </div>
 </div>
 
-<!--
-- Click 1: show the code and ask whether it compiles. The arrow marks cart.push, the line the error points to.
-- Click 2 to 6: the error message step by step. From click 3 on, the matching line in the code is highlighted together with the error section. Click 3: the shared borrow first. Click 4: push needs &mut cart. Click 5: first is still used afterwards.
-- push needs &mut cart internally. At the same time, first holds a & reference to an element.
-- Click 7, why this matters: when the capacity is exhausted, push allocates a larger buffer, copies the elements and frees the old buffer. first would still point into the old buffer, the println! afterwards would read freed memory (use-after-free).
-- Click 8: println! before push. A borrow lasts until its last use, not until the end of the block (non-lexical lifetimes, NLL). This is the most common fix for this error.
-- In C++ the equivalent code with std::vector compiles without a warning and has exactly this bug. It is the C++ snippet from the slide Memory Bugs in C and C++ (chapter 1): the same cart, the same push, here the compiler rejects it.
-- The borrow checker performs this check
-- Error message from rustc, header line wrapped for the slide. Full version: code-examples/compile-errors/04_borrow_error.rs
--->
+---
+class: dense
+---
+
+# `String` and `&str`
+
+```rust {all|1|2|3|all}
+let address = String::from("Banana Street 1"); // owns the text on the heap
+let street: &str = &address[0..6];             // string slice: "Banana"
+let city = "Minion Town";                      // literal: &'static str
+```
+
+<div class="grid grid-cols-[3fr_2fr] gap-8 mt-4">
+<div>
+
+<div class="card memgrid str-mem" v-click="1">
+  <div class="c-blue font-600">Stack</div><div></div><div class="c-yellow font-600">Data</div><div></div>
+  <code>address = { ptr, len: 15, cap: 15 }</code>
+  <div class="mem-arrow">→</div>
+  <code>"<span :class="{ 'c-orange': $clicks >= 2 }">Banana</span> Street 1"</code>
+  <div class="muted text-sm">heap</div>
+  <code v-click="2">street  = { ptr, len: 6 }</code>
+  <div v-click="2" class="mem-arrow">↗</div>
+  <div></div><div></div>
+  <code v-click="3">city    = { ptr, len: 11 }</code>
+  <div v-click="3" class="mem-arrow">→</div>
+  <code v-click="3">"Minion Town"</code>
+  <div v-click="3" class="muted text-sm">binary</div>
+</div>
+
+</div>
+<div v-click="4">
+
+| Use                    | Type           |
+| ---------------------- | -------------- |
+| Read-only parameter    | `&str`         |
+| Struct field           | `String`       |
+| Newly built text       | `String`       |
+| Literal                | `&'static str` |
+
+</div>
+</div>
+
+<div v-click="5" class="mt-4">
+
+Text is always UTF-8. `"Müsli".len()` is 6 bytes, `.chars()` iterates over the 5 characters. `address[0]` does not compile.
+
+</div>
+
+<style>
+.str-mem { grid-template-columns: auto 1.6rem auto auto; }
+.str-mem .mem-arrow { color: var(--mp-fg); font-size: 1.15em; }
+</style>
 
 ---
 class: dense
@@ -489,14 +518,6 @@ Owned types own their data on the heap. Borrowed types are references to that da
 <div v-click="2">
 
 ```rust
-fn print_label(text: &str) {
-    println!("Label: {text}");
-}
-
-let label: String = String::from("A-1001");
-print_label(&label);   // &String -> &str
-print_label("B-2002"); // string literal, also a &str
-
 fn total(prices: &[u32]) -> u32 {
     prices.iter().sum() // iterators: chapter 6
 }
@@ -514,17 +535,6 @@ Functions usually take the borrowed variant (`&str`, `&[T]`) and therefore accep
 
 </div>
 </div>
-
-<!--
-- Rust distinguishes owned and borrowed variants for text, paths and lists in the same way.
-- &label is converted from &String to &str automatically (deref coercion), the same for &Vec<u32> to &[u32] and &PathBuf to &Path
-- A slice &[T] is a view into a contiguous list: a Vec, an array or a part of them (&cart[1..])
-- PathBuf / &Path work the same way, e.g. fn export(path: &Path) accepts &PathBuf and Path::new("orders.csv")
-- String literals like "B-2002" are &'static str. They are stored in the program itself and live for its entire runtime.
-- Path and PathBuf build on OsStr and OsString and provide methods such as push, join, extension
-- More pairs following the same pattern: OsString / &OsStr (text from the OS, may not be UTF-8: file names and environment variables are UTF-16 on Windows and arbitrary bytes on Linux), CString / &CStr (null-terminated text for C code, needed for FFI, slide Macros & unsafe, chapter 9)
-- Full code: cargo run --example 04_strings
--->
 
 ---
 class: dense
@@ -567,17 +577,6 @@ error[E0597]: `s` does not live long enough
 ```
 
 </div>
-
-<!--
-- Optional
-- Show the code first and ask what happens here. r points to s, but s is dropped at the end of the inner block. The arrow marks r = &s, the line the error points to.
-- Click 1: the error line. Click 2: where s is created. Click 3: where it is borrowed. Click 4: where s is dropped while the borrow still exists. Click 5: where the reference is used afterwards. From click 2 on, the matching code line is highlighted as well.
-- In C or C++ this would be a dangling pointer, i.e. access to freed memory
-- Lifetimes exist only at compile time, not at runtime
-- 'static: next slide
-- &str was introduced on the previous slide (Owned & Borrowed Types)
-- Original rustc output. Full version: code-examples/compile-errors/04_dangling_reference.rs
--->
 
 ---
 
@@ -644,17 +643,6 @@ In most functions the compiler infers lifetimes on its own. Annotations are only
 </div>
 </div>
 
-<!--
-- Optional
-- host_or_default returns one of its two inputs, e.g. a configured host name or "localhost"
-- Click 1: the error line. Click 2: the compiler points at the returned reference. Click 3: the explanation, it does not know which input the result is borrowed from. Click 4: the suggested fix. Click 5: the whole message.
-- Click 6: the code with the suggested annotation. The error disappears.
-- Click 7: 'static. String literals are stored in the program binary, so references to them are valid forever. thread::spawn and tokio::spawn require 'static because the new thread or task can outlive the function that started it. That is why the closures there use move and own their data (Threads slide, chapter 8). T: 'static means "contains no short-lived references", not "lives forever".
-- The caller can then only use the result as long as both arguments are valid. Example: let host = host_or_default(&config.host, "localhost"); host may only be used while config is still alive, because host might point into config.host.
-- For lifetime errors, owned data instead of a reference often helps (String instead of &str)
-- Original rustc output, the help line is wrapped for the slide. Full version: code-examples/compile-errors/04_missing_lifetime.rs
--->
-
 ---
 class: dense
 ---
@@ -669,8 +657,3 @@ class: dense
   <div class="card" v-click>Ownership and borrowing are checked at compile time, with no runtime cost.</div>
   <div class="card" v-click style="border-color: var(--mp-orange)"><span class="c-orange font-600">Typical fixes</span> when the compiler complains: pass <code>&</code> instead of moving, <code>clone()</code> if the cost is acceptable, use a reference before modifying the value, or own the data (<code>String</code> instead of <code>&str</code>).</div>
 </div>
-
-<!--
-- Opportunity for questions
-- Typical fixes: each one appeared in this chapter. & instead of move (Borrowing), clone() (Use After Move, rustc suggests it), use the reference before modifying (Borrowing Rules, last click), own the data (Lifetime Annotations notes).
--->

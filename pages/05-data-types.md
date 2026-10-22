@@ -6,10 +6,6 @@ layout: section
 
 # Structs, Enums & Pattern Matching
 
-<!--
-- Custom data types. Methods with &self and &mut self use borrowing from chapter 4.
--->
-
 ---
 class: dense
 ---
@@ -63,16 +59,6 @@ println!("{kevin:?}");
 
 </div>
 </div>
-
-<!--
-- Each click highlights a part of the definition on the left and its use on the right
-- Click 1: the struct and its Debug output. Click 2: new, called as User::new. Click 3: greeting with &self. Click 4: promote with &mut self, which is why kevin is declared with let mut.
-- Self is the type itself, here User
-- Self { name: ..., admin: false } creates an instance, all fields must be set
-- new is a naming convention for constructors, not a keyword
-- The struct stores a String, not a &str. A &str field would borrow from somewhere else and need a lifetime annotation (chapter 4), so structs usually own their data.
-- Without inheritance, structures are usually flatter
--->
 
 ---
 class: dense
@@ -160,18 +146,6 @@ The pattern exists in other languages too, e.g. `record struct` in C#, `value cl
 </div>
 </div>
 
-<!--
-- Same example as on the slide "Functions & Expressions" in chapter 3, where price and quantity were both u32. total_price(3, 450) would have compiled and returned a wrong result.
-- Click 1: tuple struct with one field. Click 2: the signature now says what a price is. Click 3: the call, Money(450) creates the value. Click 4: no runtime cost.
-- Click 5: the arguments are swapped. Ask: does this compile?
-- Clicks 6 to 8: the error line, the two mismatched arguments, the suggested fix. The compiler even suggests swapping the arguments.
-- rustc error message, shortened ("..."). Full version: code-examples/compile-errors/05_newtype_swap.rs
-- Other typical newtypes: UserId, OrderId, EmailAddress. For EmailAddress, the constructor can check the format, after that every value of the type is valid.
-- Real monetary amounts need more (currency, rounding, e.g. the crate rust_decimal). This is about the principle.
-- Arithmetic with Money (+, *) via traits from std::ops. In chapter 6, Money gets more traits such as Display.
-- Other languages: a Java record Money(int cents) is a separate object on the heap. C# readonly record struct and Kotlin @JvmInline value class work without an extra allocation. TypeScript: branded types. Python: typing.NewType, checked only by type checkers such as mypy.
--->
-
 ---
 class: dense
 ---
@@ -227,16 +201,6 @@ Nothing prevents `Kind = "Pending"` together with a `TrackingId`, or `"Shipped"`
 </div>
 </div>
 
-<!--
-- Click 1: creating values. A variant without data is written like a constant, a variant with data like a struct.
-- Click 2: the usual workaround in C# or older Java code. Invalid combinations are possible and only checked at runtime, if at all.
-- In Rust, a tracking ID exists only for Shipped, a reason only for Cancelled. Invalid combinations cannot be created at all.
-- Java 21 (sealed interfaces with records) and TypeScript (discriminated unions) can express the same, but these are built from several language features. Java checks exhaustiveness only in switch over sealed types, TypeScript only with strict settings and a never check.
-- Technical term: sum type or tagged union, known from Haskell, OCaml, F#
-- Checking all variants: next slides
-- Typical uses: states, messages, commands, kinds of errors
--->
-
 ---
 class: dense
 ---
@@ -267,13 +231,6 @@ println!("{}", describe(&status)); // shipped, tracking ID DE123
 `match` must cover all variants. If a variant is added later, the compiler reports every `match` that does not handle it yet.
 
 </div>
-
-<!--
-- The enum from the previous slide is dimmed, the focus is on describe
-- Clicks 1 to 4: match and the three arms. The data of the variant is bound directly to variables (tracking_id, reason).
-- Click 5: a call. match is an expression, the value of the matching arm is the return value of the function.
-- Next slide: what happens when a variant is added
--->
 
 ---
 class: dense
@@ -339,20 +296,6 @@ help: ensure that all possible cases are being handled by adding a match arm
 
 </div>
 
-<!--
-- Optional
-- Start: enum and describe from the Pattern Matching slide
-- Click 1: the shop adds a new variant Returned, describe stays unchanged. The arrow marks match status, the place the error points to. Ask: does this compile?
-- Click 2, line 1: error code and summary. rustc --explain E0004 gives a detailed explanation.
-- Click 3: file, line and column, below it the affected place in the code (match status)
-- Click 4: the new variant that is not covered
-- Click 5: suggested fix with the arm to insert
-- In a large code base, every match over OrderStatus is reported this way. In Java or C#, a switch with a default branch would silently take the new case.
-- Original rustc output, shortened ("...": the location of the enum definition and one note line are left out) and the help line wrapped for the slide. Full version: code-examples/compile-errors/05_missing_match_arm.rs
-- The & comes from the parameter &OrderStatus, { .. } ignores the fields of the variant
-- todo!() is a placeholder that causes a panic at runtime
--->
-
 ---
 class: dense
 ---
@@ -404,16 +347,6 @@ Other crates need a `_` arm, so new variants in the library do not break their c
 
 </div>
 
-<!--
-- Optional
-- Start: the code from the Pattern Matching slide, without Returned
-- Follows from the previous slide: adding a variant breaks every match that does not handle it. In a library, that would break code in other crates.
-- Click 1: the enum moves into a library and gets #[non_exhaustive]. Click 2: the function in another crate. Click 3: the new _ arm.
-- #[non_exhaustive] only applies outside the defining crate. Without a _ arm, the compiler reports E0004 there. Within the same crate, the _ arm would be unnecessary and the compiler warns with "unreachable pattern".
-- Meant for libraries that want to add variants later without publishing a new major version (Semantic Versioning, chapter 2). The standard library uses it e.g. for std::io::ErrorKind.
-- The _ arm also catches variants you actually wanted to handle. So only use it when necessary.
--->
-
 ---
 class: dense
 ---
@@ -463,16 +396,6 @@ let user = find_user(7).unwrap_or(User::new("Guest"));
 <div v-click class="mt-4 card">
 Rust has no <code>null</code>. An optional value must be an <code>Option</code> in the type, and the <code>None</code> case must be handled.
 </div>
-
-<!--
-- User is the struct from Structs & Methods
-- T stands for any type, like generics in Java, C# or TypeScript (details in chapter 6)
-- if let is a match with only one arm, here only for Some
-- An Option<User> cannot be used directly like a User, the compiler forces the check
-- C#: User? with nullable reference types only produces warnings. TypeScript: User | undefined is checked with strictNullChecks, but the ! operator bypasses it. Java: Optional exists, but any reference can still be null.
-- Tony Hoare (not related to Graydon Hoare) introduced the null reference in ALGOL W in 1965 and called it a "billion dollar mistake" in 2009
-- Helper methods: map, and_then, unwrap_or, unwrap_or_default, ok_or
--->
 
 ---
 class: dense
@@ -530,16 +453,6 @@ In C#, the same function returns `int` and throws an exception. The signature do
 Like <code>Option</code>, <code>Result</code> is an enum: either <code>Ok</code> with the result or <code>Err</code> with the error. Rust has no exceptions, possible errors are part of the return type.
 </div>
 
-<!--
-- Same handling forms as for Option: match and if let
-- reserve takes items out of the stock and returns the remaining stock, or an error message if there are not enough items
-- Option: a value may be missing. Result: an operation can fail, with information about the error.
-- T is the type on success, E the type of the error. Here a String as the simplest error message.
-- The compiler forces you to handle the Err case, just like None with Option
-- Java checked exceptions are visible in the signature, but are often avoided in practice (unchecked exceptions, lambdas). C# has no checked exceptions.
-- More convenient error handling with ?, custom error types and panic!: chapter 7
--->
-
 ---
 
 # More Patterns
@@ -568,12 +481,3 @@ fn should_retry(http_status: u16, attempt: u32) -> bool {
 </v-clicks>
 
 </div>
-
-<!--
-- Optional
-- Decides whether an HTTP request to the payment provider is retried after an error. 429 (too many requests) up to 5 attempts, 408 and 503 up to 3.
-- An arm can return any expression, here attempt < 5
-- 200..=299 includes both bounds, | means "or", the condition after if applies to both values
-- Arms are checked from top to bottom, the first matching one wins
-- let ... else: if find_user returns None, the else block runs and must leave the function (return, break, panic). Otherwise user is available after the line. find_user is the function from the Option slide.
--->

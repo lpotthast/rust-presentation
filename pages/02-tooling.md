@@ -6,10 +6,6 @@ layout: section
 
 # Tooling & Cargo
 
-<!--
-- How to create and build a project, before we get to the language itself
--->
-
 ---
 class: dense
 ---
@@ -44,15 +40,6 @@ rustup update   # update to the latest version
   <div class="card" v-click="4"><h3 class="c-orange">rust-analyzer</h3><p>Language server for VS Code, Zed, Vim and others. Not installed by rustup by default.</p></div>
 </div>
 </div>
-
-<!--
-- One build system and one formatter for all projects, no choice to make like in C++ (CMake, Meson, Bazel ...)
-- Editions: new compiler versions still compile old code as long as the crate stays on its edition. Switching to a new edition can break code, e.g. async became a keyword in edition 2018, so let async = 1; no longer compiles there. cargo fix --edition migrates most of it automatically.
-- Clicks 1 to 4: what rustup installs. Click 5: how releases and editions work.
-- A crate on edition 2015 can use a crate on edition 2024 without problems, and vice versa
-- Windows: rustup-init.exe from rustup.rs or winget install Rustlang.Rustup. It needs the Visual Studio C++ Build Tools for linking, the installer offers to install them.
-- In its default profile, rustup installs rustc, cargo, rustfmt and clippy. rust-analyzer comes separately: via the editor extension (e.g. VS Code) or with rustup component add rust-analyzer. RustRover has its own analysis engine.
--->
 
 ---
 class: dense
@@ -119,17 +106,6 @@ Rust packages are called **crates**. Comparable to:
 
 </div>
 </div>
-
-<!--
-- Comparable to npm or Maven
-- Click 1: create, build and run. Click 2: code quality (tests, formatting, linter). Click 3: documentation and dependencies. Click 4: all commands again, and the project structure gets more conventions. Click 5: the term crate and the comparison with other ecosystems.
-- Maven has no lock file by default, versions are fixed in the pom.xml. Python: the lock file depends on the tool (uv.lock, poetry.lock).
-- cargo check only type-checks without generating code. Much faster than cargo build, ideal while writing code.
-- Packages are called crates, the central registry is crates.io
-- Cargo.lock is created on the first build, cargo new only creates Cargo.toml and src/main.rs
-- First state: after cargo new and the first build. Click 4: more conventions. Cargo detects these files and directories automatically, without configuration.
-- Optional live demo: cargo new hello && cd hello && cargo run
--->
 
 ---
 class: dense
@@ -200,16 +176,6 @@ codegen-units = 1
 </div>
 </div>
 
-<!--
-- Optional
-- Each click highlights a section on the left and shows its explanation on the right. Earlier explanations are dimmed, at the last click everything is bright again.
-- Cargo.lock contains the exact versions, which makes builds reproducible
-- anyhow: simplest form, just the version
-- serde: feature "derive" in addition to the default features, needed for #[derive(Serialize, Deserialize)]
-- reqwest (HTTP client): default features turned off (e.g. HTTP/2, charset detection, system proxy), only TLS via rustls and JSON support enabled. Saves dependencies and compile time.
-- assertr: library for readable assertions in tests, e.g. assert_that!(port).is_greater_than(1023). Only built for tests.
--->
-
 ---
 class: dense
 ---
@@ -254,19 +220,6 @@ class: dense
 
 </div>
 </div>
-
-<!--
-- Optional
-- Table: the same version three times, only the operator changes. Without an operator (the default, same as ^), Cargo allows all updates up to the next incompatible version.
-- Before 1.0.0: the SemVer specification allows any change there. Cargo uses the rule "the first non-zero number is incompatible": in 0.4.2 the 4 is the incompatible position, an update to 0.4.3 may contain new functionality or bug fixes. With 0.0.x every new version counts as incompatible.
-- Many popular crates are still at 0.x, e.g. rand 0.8 → 0.9 or axum 0.7 → 0.8 were real breaking changes.
-- A requirement without an operator is the same as ^ (caret). This is the normal case, ~ and = are rarely needed.
-- Avoid = in libraries: it prevents Cargo from finding a common version for all dependencies.
-- The examples without an operator ("1", "0.13.5") are known from the previous slide.
-- Cargo.lock records the versions actually used. cargo update updates within the allowed ranges.
-- Different incompatible versions of the same crate can appear in the dependency tree at the same time
-- The rules assume that crate authors follow SemVer. cargo-semver-checks verifies this automatically before a release.
--->
 
 ---
 class: dense
@@ -337,14 +290,3 @@ cargo test -p shop-core  # only one crate
 
 </div>
 </div>
-
-<!--
-- Optional
-- Typical use: splitting larger projects into a library and an application, or several services with shared code
-- All crates share Cargo.lock and target/. Shared dependencies are built only once, all crates use the same versions.
-- Click 1: the root Cargo.toml only contains [workspace]. members lists the crates, here via a pattern.
-- [workspace.dependencies] defines versions in one place. The crates take them over with workspace = true.
-- Click 2: dependency between crates in the workspace via path. Publishing to crates.io additionally requires a version.
-- resolver = "3" is the current dependency resolver for edition 2024. A workspace root without [package] has no edition, so the resolver must be set explicitly. Otherwise Cargo falls back to resolver 1 and warns.
-- Shorter compile times: after a change, only the affected crates are rebuilt
--->

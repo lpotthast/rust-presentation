@@ -1,6 +1,6 @@
 # Rust - An Introduction
 
-Presentation (about 60 minutes) for beginners without prior Rust knowledge, built with [Slidev](https://sli.dev).
+Presentation (about 120 minutes) for beginners without prior Rust knowledge, built with [Slidev](https://sli.dev).
 The slides are plain Markdown and run in the browser.
 
 ## Getting Started
@@ -22,7 +22,7 @@ Useful shortcuts during the talk:
 - `o`: slide overview
 - `d`: toggle dark/light (please keep it dark)
 - `f`: fullscreen
-- Presenter mode with notes and timer: <http://localhost:3030/presenter>
+- Presenter mode with timer and next-slide preview: <http://localhost:3030/presenter>
 
 ## Structure
 
@@ -42,7 +42,7 @@ pages/
 styles/index.css      # colors (Monokai Pro palette), cards, timeline
 setup/monokai-pro.json  # syntax highlighting in Monokai Pro style
 setup/shiki.ts        # loads the theme
-global-top.vue        # footer with slide number
+global-top.vue        # footer with chapter name and slide number
 public/ferris.svg     # Ferris (rustacean.net, public domain/CC0)
 public/code/          # place for code screenshots from the IDE
 code-examples/        # Cargo project with all code examples from the slides
@@ -51,16 +51,15 @@ code-examples/        # Cargo project with all code examples from the slides
 ## Editing Slides
 
 - Slides are separated by `---`. Options (e.g. `layout`, `class`) go in the block right after the `---`.
-- Speaker notes are HTML comments `<!-- ... -->` at the end of a slide and show up in presenter mode.
+- Speaker notes can be added as HTML comments `<!-- ... -->` at the end of a slide. They show up in presenter mode.
 - `<v-clicks>` and `v-click` reveal content step by step.
 - Highlight code lines step by step: ` ```rust {all|1-3|5} `
 - Slide too full? Set `class: dense` in the frontmatter. This shrinks code and text, the title keeps its size.
-- Slides that can be skipped when short on time are marked "Optional" in the notes. Hide them with `hide: true` in the
-  frontmatter.
+- To shorten the talk, hide slides with `hide: true` in the frontmatter.
 - Helper classes from `styles/index.css`: `card`, `muted`, `small-code`, `dense`, `chapter`, `c-orange`, `c-green`,
   `c-blue`, ...
 - Tailwind-style layout utilities (UnoCSS) work directly, e.g. `grid grid-cols-2 gap-8`.
-- Text on slides and in speaker notes is selectable (`selectable: true` in `slides.md`, CSS rule in `styles/index.css`).
+- Text on slides is selectable (`selectable: true` in `slides.md`, CSS rule in `styles/index.css`).
   Please do not use `select-none` or `user-select: none`.
 
 To add a new chapter, create a file in `pages/` and include it in `slides.md`:
@@ -99,9 +98,12 @@ start of the file name is the chapter. Handy for IDE screenshots or live demos:
 cd code-examples
 cargo run --example 05_enums
 cargo run --example 09_axum      # web server: curl localhost:3000/me
-cargo run --example 08_channels  # async channels with tokio::sync::mpsc
+cargo run --example 08_channels  # threads send their results through std::sync::mpsc
+cargo run --example 08_channels_tokio  # the same idea with tokio::sync::mpsc and .await
+cargo run --example 08_shared_state  # threads with Arc<Mutex<T>>
 cargo run --example 09_clap -- --help   # reorder <SKU> --quantity
 cargo run --example 07_panic -- unwrap  # panics shown in chapter 7 (index, unwrap, expect)
+cargo run --example 07_handling # four ways to handle a Result, ends with the expect panic
 cargo run --example 10_order_api # combined example: curl localhost:3000/orders/2
 cargo test              # library tests and doc tests
 cargo test --examples   # also runs the tests inside the examples (e.g. 03_modules)
@@ -112,5 +114,6 @@ the Cargo build and produce the error messages shown on the slides, e.g.:
 
 ```bash
 rustc --edition 2024 code-examples/compile-errors/04_borrow_error.rs
+rustc --edition 2024 code-examples/compile-errors/08_data_race.rs  # E0499, two threads write the same Vec
 rustc --edition 2024 code-examples/compile-errors/03_private_function/main.rs  # multi-file example
 ```

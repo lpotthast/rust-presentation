@@ -3,7 +3,11 @@ use std::sync::Mutex;
 use std::thread;
 
 fn main() {
-    let orders = vec![vec![450, 1200], vec![299], vec![1299, 450, 99]];
+    let orders = vec![
+        vec![450, 1200], // prices in cents
+        vec![299],
+        vec![1299, 450, 99],
+    ];
     let total = Rc::new(Mutex::new(0));
     let mut handles = vec![];
 

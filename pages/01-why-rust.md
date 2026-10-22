@@ -33,13 +33,6 @@ class: dense
   </div>
 </div>
 
-<!--
-- Quote: main slogan on rust-lang.org. The three cards are shortened versions of the three sections below it: Performance, Reliability, Productivity.
-- rust-lang.org says "no runtime". This means no runtime like the JVM or .NET. For async you still need a runtime later, as a library (Tokio, chapter 8).
-- Thread safety here means: data races are ruled out at compile time (chapter 8)
-- Rust is a compiled language, stable since 2015 (version 1.0), used from microcontrollers to web backends
--->
-
 ---
 
 # History
@@ -60,20 +53,6 @@ class: dense
 </div>
 </div>
 
-<!--
-- Click 1: origins until 1.0. Click 2: since 1.0. Click 3: the elevator story.
-- The crashed elevator software was most likely a memory bug, which leads to the next slide.
-- Hoare was employed at Mozilla but initially developed Rust as a side project, outside of work. The project was not public until 2010.
-- In 2009 Mozilla started funding it, from 2010 Rust was an official Mozilla Research project. Public announcement in 2010.
-- Source for the elevator story: MIT Technology Review, February 2023
-- Name: according to Hoare, partly after rust fungi, which Hoare called "over-engineered for survival"
-- Mozilla wanted a safer browser engine that uses multiple CPU cores (project Servo, from 2012). Parts of it, e.g. the CSS engine, shipped in Firefox Quantum in 2017.
-- First Rust code in Firefox: 2016 (MP4 parser in Firefox 48)
-- 2020 layoffs at Mozilla, 2021 founding of the independent Rust Foundation. Founding members: AWS, Google, Huawei, Microsoft, Mozilla.
-- Kernel: the "Rust experiment" was declared over at the Maintainers Summit in December 2025. Some parts (e.g. certain architectures) are still considered experimental.
-- Release cycle: a new version every 6 weeks
--->
-
 ---
 class: dense
 ---
@@ -87,7 +66,7 @@ Typical bug classes in C and C++:
 
 <v-clicks>
 
-- **Use-after-free:** accessing memory that was already freed
+- **Use-after-free:** accessing already freed memory
 - **Buffer overflow:** writing past the end of an array
 - **Double free:** memory is freed twice
 - **Null pointer:** access through a pointer without a valid target <span class="tag tag-yellow ml-1">also in Java, C#, Go</span>
@@ -95,7 +74,7 @@ Typical bug classes in C and C++:
 
 </v-clicks>
 
-<div v-click class="small-code mt-3">
+<div v-click class="mt-3">
 
 Use-after-free in C++:
 
@@ -124,16 +103,6 @@ std::cout << first;         // compiles, reads freed memory
   </div>
 </div>
 </div>
-
-<!--
-- Use-after-free, buffer overflow and double free do not occur in Java, C# or Go. Null pointers and data races do: NullPointerException / NullReferenceException / nil pointer panic, and data races in multithreaded code. In these languages a null access throws an exception instead of corrupting memory, but the program still fails at runtime.
-- Both rows show up again in the comparison on the next slide, where only Rust gets a check mark.
-- Click 6, C++ example: first is a reference into the vector. push_back can move all elements to a new, larger buffer and free the old one. first then points into freed memory. It compiles without a warning (clang -Wall -Wextra), AddressSanitizer reports heap-use-after-free at runtime. The same code in Rust comes back in chapter 4 (Borrowing Rules), where the compiler rejects it.
-- Also affects companies with large, experienced teams and extensive tooling
-- Microsoft: ~70% of all CVEs per year, not broken down by severity. Chromium: ~70% of bugs with severity "high" or above, i.e. exactly the dangerous ones.
-- Android: new code is mostly written in memory-safe languages (Java, Kotlin, Rust). Most existing C++ code was not rewritten. Most vulnerabilities come from new code, so changing the language for new code already has an effect. Source: Google Security Blog, September 2024.
-- Government agencies recommend memory-safe languages: NSA (2022), CISA (2023), White House (2024)
--->
 
 ---
 class: dense
@@ -172,19 +141,6 @@ A complex type in async code: `Pin<Box<dyn Future<Output = Result<Vec<u8>, io::E
 .hide-costs tbody tr:nth-child(n+7) { opacity: 0; border-color: transparent; }
 </style>
 
-<!--
-- Start: only the benefits. Click 1: the last three rows (below "Costs"), the price Rust pays for the rows above. Click 2: an example of a complex type.
-- Python and TypeScript belong in the middle column, with lower performance than Java, C# or Go
-- Garbage collector: extra memory usage, pauses, latencies that are hard to predict
-- A problem for operating systems, embedded, browsers, databases, services with latency requirements
-- Rust checks memory safety at compile time. Without `unsafe`, memory bugs and data races are ruled out.
-- Zero-cost abstractions: abstractions like iterators, generics or closures cost nothing at runtime compared to hand-written code. The principle comes from C++ ("zero-overhead"), Rust applies it consistently. In Java, C# or Go many abstractions have a cost (boxing, dynamic dispatch, allocations), the JIT compiler makes up for part of it. Example with iterators: chapter 6.
-- Compile times: borrow checking, monomorphization of generics and LLVM optimizations take time. C is fast, C++ with templates is about as slow as Rust. Mitigations: cargo check, incremental builds, splitting into multiple crates.
-- Learning curve: ownership, borrowing and lifetimes are new to most people. C is easy to learn, C++ is very large.
-- The type example is only an illustration, nobody needs to understand its parts yet
-- Types: usually manageable in everyday code. With async code, many trait bounds or lifetimes, signatures can get very long. Type aliases help. C++ templates have the same problem.
--->
-
 ---
 class: dense
 ---
@@ -205,11 +161,3 @@ class: dense
 <div v-click class="mt-6">
 Stack Overflow Developer Survey: ranked first for "most loved" or "most admired" every year from 2016 to 2025.
 </div>
-
-<!--
-- Figma: the multiplayer server that synchronizes documents between users was rewritten from TypeScript to Rust in 2018 for performance (Figma blog, "Rust in production at Figma")
-- Linux kernel: see the History slide
-- Discord: the "Read States" service had latency spikes in Go caused by the garbage collector, after the migration it no longer did
-- Stack Overflow: 2016 to 2022 "most loved", 2023 to 2025 "most admired". 2026: 67%, the highest value among widely used languages (Elm and Odin rank higher formally, but with very few responses).
-- More well-known tools written in Rust: chapter 9
--->
