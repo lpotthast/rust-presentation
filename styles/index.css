@@ -1,0 +1,495 @@
+/* Color palette based on Monokai Pro */
+:root {
+  --mp-bg-dark: #19181a;
+  --mp-bg: #221f22;
+  --mp-bg-code: #2d2a2e;
+  --mp-border: #403e41;
+  --mp-fg: #fcfcfa;
+  --mp-muted: #939293;
+  --mp-card-text: #abaaab;
+  --mp-dim: #727072;
+  --mp-red: #ff6188;
+  --mp-orange: #fc9867;
+  --mp-yellow: #ffd866;
+  --mp-green: #a9dc76;
+  --mp-blue: #78dce8;
+  --mp-purple: #ab9df2;
+
+  --slidev-theme-primary: var(--mp-orange);
+  --slidev-slide-container-background: var(--mp-bg-dark);
+}
+
+html.dark {
+  --slidev-code-background: var(--mp-bg-code);
+  --slidev-code-foreground: var(--mp-fg);
+  --slidev-code-font-size: 12px;
+  --slidev-code-line-height: 18px;
+  --slidev-code-padding: 12px 16px;
+  --slidev-code-radius: 10px;
+  --slidev-code-margin: 12px 0;
+  --slidev-code-tab-divider: var(--mp-border);
+}
+
+.slidev-layout {
+  background: var(--mp-bg);
+  color: var(--mp-fg);
+  font-size: 1.05rem;
+}
+
+.slidev-layout h1 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* small accent bar below slide titles */
+.slidev-layout.default h1::after,
+.slidev-layout.two-cols-header h1::after,
+.slidev-layout.two-cols h1::after {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 4px;
+  margin-top: 0.6rem;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--mp-orange), var(--mp-red));
+}
+
+.slidev-layout h1 + p {
+  opacity: 1;
+  color: var(--mp-muted);
+  margin-top: 1rem;
+}
+
+/* columns of a grid start flush at the top, so cards, code and text line up */
+.slidev-layout .grid > * > :first-child,
+.slidev-layout .grid > * > :first-child > :first-child,
+.slidev-layout .grid > * > :first-child > :first-child > :first-child,
+.slidev-layout .grid > * > .code-pointer + * {
+  margin-top: 0 !important;
+}
+
+.slidev-layout strong {
+  color: var(--mp-yellow);
+  font-weight: 600;
+}
+
+.slidev-layout a {
+  color: var(--mp-blue);
+  border-bottom: 1px dashed var(--mp-blue);
+}
+
+.slidev-layout ul li::marker {
+  color: var(--mp-orange);
+}
+
+.slidev-layout li {
+  margin: 0.35rem 0;
+  line-height: 1.45;
+}
+
+/* list markers inside the content edge, aligned with titles and cards */
+.slidev-layout ul {
+  padding-left: 1.2rem;
+}
+
+.slidev-layout ol {
+  padding-left: 1.8rem;
+}
+
+/* inline code */
+.slidev-layout :not(pre) > code {
+  background: var(--mp-bg-code);
+  color: var(--mp-yellow);
+  border: 1px solid var(--mp-border);
+  border-radius: 5px;
+  padding: 0.05em 0.35em;
+  font-size: 0.9em;
+}
+
+.slidev-code {
+  border: 1px solid var(--mp-border);
+}
+
+/* images / code screenshots from the IDE */
+.slidev-layout img {
+  border-radius: 10px;
+  max-height: 400px;
+  margin: 0.5rem auto;
+}
+
+.slidev-layout table {
+  font-size: 0.95rem;
+}
+
+.slidev-layout th {
+  color: var(--mp-orange);
+}
+
+.slidev-layout td,
+.slidev-layout th {
+  border-color: var(--mp-border);
+  padding: 0.45rem 0.8rem;
+}
+
+/* Cover */
+.slidev-layout.cover {
+  background:
+    radial-gradient(ellipse at 85% 15%, rgba(252, 152, 103, 0.18), transparent 55%),
+    radial-gradient(ellipse at 10% 90%, rgba(255, 97, 136, 0.12), transparent 50%),
+    var(--mp-bg-dark);
+  padding-left: 5rem;
+}
+
+.slidev-layout.cover h1 {
+  font-size: 5.5rem;
+  line-height: 1;
+  background: linear-gradient(90deg, var(--mp-orange), var(--mp-red));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* chapter dividers */
+.slidev-layout.section {
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(252, 152, 103, 0.16), transparent 60%),
+    var(--mp-bg-dark);
+}
+
+.slidev-layout.section h1 {
+  font-weight: 700;
+  font-size: 3.25rem;
+  line-height: 1.2;
+}
+
+.slidev-layout.section .chapter {
+  color: var(--mp-orange);
+  font-family: var(--slidev-code-font-family);
+  font-size: 1rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.slidev-layout.section h1 + p {
+  color: var(--mp-muted);
+}
+
+.slidev-layout.statement,
+.slidev-layout.fact,
+.slidev-layout.end,
+.slidev-layout.center {
+  background: var(--mp-bg-dark);
+}
+
+.slidev-layout.fact h1 {
+  color: var(--mp-orange);
+}
+
+/* reusable building blocks */
+.card {
+  background: var(--mp-bg-code);
+  border: 1px solid var(--mp-border);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+}
+
+.card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.card p,
+.card li {
+  font-size: 0.95rem;
+  color: var(--mp-card-text);
+  line-height: 1.45;
+}
+
+.muted { color: var(--mp-muted); }
+.c-red { color: var(--mp-red); }
+.c-orange { color: var(--mp-orange); }
+.c-yellow { color: var(--mp-yellow); }
+.c-green { color: var(--mp-green); }
+.c-blue { color: var(--mp-blue); }
+.c-purple { color: var(--mp-purple); }
+
+.small-code .slidev-code {
+  --slidev-code-font-size: 10px;
+  --slidev-code-line-height: 14px;
+}
+
+/* timeline */
+.timeline {
+  position: relative;
+  margin-left: 0.6rem;
+  padding-left: 1.6rem;
+  border-left: 2px solid var(--mp-border);
+}
+
+.timeline .item {
+  position: relative;
+  margin-bottom: 0.45rem;
+  font-size: 0.95rem;
+  padding-left: 3.5rem;
+}
+
+.timeline .item::before {
+  content: '';
+  position: absolute;
+  left: -2.05rem;
+  top: 0.4rem;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: var(--mp-orange);
+  box-shadow: 0 0 0 4px var(--mp-bg);
+}
+
+.timeline .year {
+  font-family: var(--slidev-code-font-family);
+  color: var(--mp-orange);
+  font-weight: 600;
+  display: inline-block;
+  width: 3.5rem;
+  margin-left: -3.5rem;
+}
+
+/* inline code in headings: monospace and colored, without a box */
+.slidev-layout h1 code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.9em;
+  font-family: var(--slidev-code-font-family);
+  font-weight: 600;
+  color: var(--mp-orange);
+  line-height: 1;
+}
+
+/* compact cards (e.g. crates.io overview) */
+.compact .card {
+  padding: 0.6rem 0.9rem;
+}
+
+.compact .card h3 {
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+
+.compact .card p {
+  font-size: 0.85rem;
+}
+
+/* closing slide */
+.slidev-layout.closing {
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(252, 152, 103, 0.16), transparent 60%),
+    var(--mp-bg-dark);
+}
+
+.slidev-layout.closing h1 {
+  font-size: 4rem;
+}
+
+/* denser content for slides with a lot of code; title size stays the same */
+.slidev-layout.dense {
+  font-size: 0.9rem;
+}
+
+.slidev-layout.dense .slidev-code {
+  --slidev-code-font-size: 10.5px;
+  --slidev-code-line-height: 15px;
+  --slidev-code-padding: 10px 14px;
+}
+
+.slidev-layout.dense .small-code .slidev-code {
+  --slidev-code-font-size: 9px;
+  --slidev-code-line-height: 13px;
+}
+
+.slidev-layout.dense .text-base,
+.slidev-layout.dense .card p,
+.slidev-layout.dense .card li,
+.slidev-layout.dense table {
+  font-size: 0.85rem;
+}
+
+.slidev-layout.dense .text-sm {
+  font-size: 0.75rem;
+}
+
+/* compact cards, placed after .dense so they take precedence */
+.slidev-layout .compact .card {
+  padding: 0.5rem 0.8rem;
+}
+
+.slidev-layout .compact .card h3 {
+  font-size: 0.9rem;
+  margin: 0 0 0.2rem;
+}
+
+.slidev-layout .compact .card p {
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+/* all content must be selectable and copyable, including speaker notes in presenter mode */
+.slidev-layout,
+.slidev-layout *,
+.slidev-note,
+.slidev-note * {
+  user-select: text !important;
+}
+
+/* Ferris mascot: no frame, no auto margins from the generic img rule */
+.slidev-layout img.ferris {
+  border-radius: 0;
+  max-height: none;
+  margin: 0;
+}
+
+.slidev-layout.closing img.ferris {
+  margin: 0 auto 1rem;
+}
+
+/* inline code never breaks inside a token */
+.slidev-layout :not(pre) > code {
+  white-space: nowrap;
+}
+
+/* list indentation inside cards */
+.slidev-layout .card ul {
+  padding-left: 1.2rem;
+}
+
+/* color utilities win over the muted card text color */
+.slidev-layout .card .c-red { color: var(--mp-red); }
+.slidev-layout .card .c-orange { color: var(--mp-orange); }
+.slidev-layout .card .c-yellow { color: var(--mp-yellow); }
+.slidev-layout .card .c-green { color: var(--mp-green); }
+.slidev-layout .card .c-blue { color: var(--mp-blue); }
+.slidev-layout .card .c-purple { color: var(--mp-purple); }
+
+/* no ligatures in code: beginners must see the characters they have to type (-> instead of an arrow glyph) */
+.slidev-code,
+.slidev-code *,
+.slidev-layout code {
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+}
+
+/* evaluation table inside cards (pros/cons with tags) */
+.slidev-layout .card table.eval {
+  width: 100%;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.slidev-layout .card table.eval td {
+  border: none;
+  border-top: 1px solid var(--mp-border);
+  padding: 0.4rem 0.2rem;
+  color: var(--mp-fg);
+  vertical-align: middle;
+}
+
+.slidev-layout .card table.eval td:last-child {
+  text-align: right;
+  white-space: nowrap;
+  width: 1%;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+
+.tag-green { color: var(--mp-green); }
+.tag-yellow { color: var(--mp-yellow); }
+.tag-orange { color: var(--mp-orange); }
+.tag-muted { color: var(--mp-dim); }
+.tag-red { color: var(--mp-red); }
+
+/* time chart (async slide) */
+.timechart { font-size: 0.85rem; }
+.timechart .tc-axis, .timechart .tc-row, .timechart .tc-total {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  align-items: center;
+}
+.timechart .tc-axis .tc-track { background: none; height: 1rem; }
+.timechart .tc-axis span { position: absolute; transform: translateX(-50%); color: var(--mp-dim); font-family: var(--slidev-code-font-family); font-size: 0.7rem; white-space: nowrap; }
+.timechart .tc-axis span:first-child { transform: none; }
+.timechart .tc-axis span:last-child { transform: translateX(-100%); }
+.timechart .tc-group { color: var(--mp-muted); margin: 0.6rem 0 0.3rem; }
+.timechart .tc-row { margin: 0.25rem 0; }
+.timechart .tc-label { font-family: var(--slidev-code-font-family); font-size: 0.8rem; color: var(--mp-fg); }
+.timechart .tc-track {
+  position: relative;
+  height: 1.3rem;
+  grid-column: 2;
+  background: repeating-linear-gradient(90deg, var(--mp-border) 0 1px, transparent 1px 25%);
+}
+.timechart .tc-bar { position: absolute; top: 0.15rem; bottom: 0.15rem; border-radius: 4px; border: 1px solid var(--mp-bg); }
+.timechart .tc-total .tc-track { background: none; height: 1.1rem; }
+.timechart .tc-mark {
+  position: absolute;
+  transform: translateX(-100%);
+  padding-right: 0.4rem;
+  border-right: 2px solid var(--mp-yellow);
+  color: var(--mp-yellow);
+  font-family: var(--slidev-code-font-family);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+.c-bg-blue { background: var(--mp-blue); }
+.c-bg-green { background: var(--mp-green); }
+.c-bg-orange { background: var(--mp-orange); }
+.c-bg-dim { background: var(--mp-dim); }
+
+/* stat cards with large numbers, compact variant */
+.slidev-layout .compact-stats .card { padding: 0.6rem 1rem; }
+.slidev-layout .compact-stats .card p { margin: 0.2rem 0 0; }
+
+/* tables with many rows */
+.slidev-layout .tight-table td,
+.slidev-layout .tight-table th {
+  padding-top: 0.28rem;
+  padding-bottom: 0.28rem;
+}
+
+/* semver staircase */
+.semver-head { font-family: var(--slidev-code-font-family); font-size: 1.3rem; font-weight: 600; color: var(--mp-orange); margin-bottom: 0.2rem; white-space: nowrap; }
+.semver-steps { display: flex; flex-direction: column; gap: 0.4rem; }
+.semver-step { display: flex; align-items: center; gap: 0.5rem; }
+.semver-step .semver-arrow { color: var(--mp-orange); font-size: 1.4rem; line-height: 1; }
+.slidev-layout .semver-step .card { padding: 0.45rem 0.8rem; flex: 1; }
+.slidev-layout .semver-step .card p { margin: 0; }
+
+/* memory diagram (Move slide) */
+.slidev-layout .memgrid {
+  display: grid;
+  grid-template-columns: auto 1.6rem auto;
+  align-items: center;
+  row-gap: 0.45rem;
+  column-gap: 0.3rem;
+  font-size: 0.85rem;
+}
+.slidev-layout .memgrid code { white-space: nowrap; justify-self: start; }
+.slidev-layout .memgrid .mem-arrow { color: var(--mp-muted); text-align: center; }
+
+/* pointer to the current code line (Move slide) */
+.slidev-layout .code-pointer {
+  position: absolute;
+  left: -1.3rem;
+  height: 18px;
+  line-height: 18px;
+  font-size: 0.8rem;
+  color: var(--mp-orange);
+  transition: top 0.35s ease;
+  z-index: 10;
+}
